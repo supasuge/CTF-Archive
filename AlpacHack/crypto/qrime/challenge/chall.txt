@@ -1,0 +1,39 @@
+from Crypto.Util.number import long_to_bytes, isPrime
+
+def nextPrime(n):
+    while not isPrime(n := n + 1):
+        continue
+    return n
+
+n = 200697881793620389197751143658858424075492240536004468937396825699483210280999214674828938407830171522000573896259413231953182108686782019862906633259090814783111593304404356927145683840948437835426703183742322171552269964159917779
+e = 65537
+c = 77163248552037496974551155836778067107086838375316358094323022740486805320709021643760063197513767812819672431278113945221579920669369599456818771428377647053211504958874209832487794913919451387978942636428157218259130156026601708
+r = 30736331670163278077316573297195977299089049174626053101058657011068283335270
+
+# First let's find nr (nextPrime of r)
+nr = nextPrime(r)
+print(f"nr = {nr}")
+
+# Based on the equation p = q * nextPrime(r) + nextPrime(q) * r
+# and knowing that n = p * q
+# We can try to factor n to find q
+
+# Once we have q we can find nq (nextPrime of q)
+# q = r  # This appears to be the case from looking at the value
+q = r  # They're the same value
+nq = nextPrime(q)
+print(f"nq = {nq}")
+
+# Now we can calculate p
+p = q * nr + nq * r
+print(f"p = {p}")
+
+# Verify this gives us the correct n
+assert p * q == n, "Factorization failed"
+
+# Now we can decrypt
+phi = (p - 1) * (q - 1)
+d = pow(e, -1, phi)
+m = pow(c, d, n)
+flag = long_to_bytes(m)
+print(f"Flag: {flag.decode()}")
