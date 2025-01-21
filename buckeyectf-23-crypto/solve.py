@@ -3,17 +3,15 @@ import time
 import string
 from urllib.parse import quote
 
-# 1) Use a session for fewer TCP handshakes
 session = requests.Session()
 
-# 2) Possibly reduce charset if you know the flag's format
 chars = string.printable
 
 url = lambda msg: f"http://localhost:5000/encrypt?message={msg}"
 
 def get_enc(plaintext):
     response = session.get(url(quote(plaintext)))
-    return response.text  # hex-encoded ciphertext
+    return response.text 
 
 def generate(prefix):
     """Generate list of prefix+candidate for every candidate in chars."""
@@ -24,8 +22,7 @@ def main():
     start = time.time()
     print(f"[+] Starting attack at: {start}")
 
-    # For demonstration, let's assume we want 5 blocks of the unknown (like your example).
-    # Typically you'd continue until you get the entire flag.
+    # 5 blocks of unknown
     for block_idx in range(5):
         for i in range(16):
             # Build the big single-try input:
