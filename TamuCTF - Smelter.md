@@ -45,7 +45,7 @@ This implementation directly performs RSA verification without rigorously valida
 
 ---
 
-### Understanding the vulnerability - RSA signature verification & the Bleichenbacher attach
+### Understanding the vulnerability - RSA signature verification & the Bleichenbacher attack
 
 This challenge uses a low public exponent ($e=3$), combined with improper validation of PKCS#1 v1.5 padding during signature verification beyond simply copmparing hashes.
 
