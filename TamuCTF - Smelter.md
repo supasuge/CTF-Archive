@@ -12,8 +12,6 @@
 - `utils.py`: Utility functions for cryptographic functionality/session management.
 - `main.py`: Main flask functionality/endpoint handling.
 
-> [!INFO]
-> Visit `/dist` to see the actual challenge source code. It's too much to paste here.
 
 ### Challenge Overview
 
@@ -136,6 +134,78 @@ We then used this cookie to authenticate:
 cookies = {"smelter-session": session_cookie}
 response = requests.get(url, cookies=cookies)
 ```
+
+Full source code:
+
+```python
+#!/usr/bin/env python3
+
+from hashlib import sha256
+from Crypto.PublicKey import RSA
+from base64 import b64encode
+import json
+import requests
+from forgelib import SignatureForger
+import re
+PEM = """-----BEGIN PUBLIC KEY-----
+MIIBHzANBgkqhkiG9w0BAQEFAAOCAQwAMIIBBwKCAQB8HTNWyTtV+kkwv8RB9Qqn
+ohrXg4y2X6SjKUCpVCZNBRE7iL7wlmTXaAUdXr7uSIQy0se/O8vunxqO8xZjYAq9
+yJn9NcYbx8qSbAQUpUfmL4vTLhLeS4X8Ml4GtEEXCQTajg2lHEafeRvTr0G8UlXY
+E9Bcy6LDEPmQ7zD/0kvfHEEExKA/cSDQMNsHJaDQOhlN01N6XQWBBvskt76L2Jz1
+PTutUkEWnJG0MTR7HuGQV7+fjAYjxXZNXBXHq71LX9pvVATvs3F9btwIm950mgcs
+eQ2+u+Ozud14jwydG7iK4aTAlKEcs5Wl4wuVcAlT87IZRzS6ieazeS53VMFeHX7z
+AgED
+-----END PUBLIC KEY-----"""
+
+key = RSA.import_key(PEM)
+n, e = key.n, key.e
+print(f"[+] RSA Public key parameters: [+]")
+print(f"[+] n {n}\te = {e} [+]\n")
+# Use a message with odd hash last byte (confirmed working)
+message = "admin"  # Try "admin\n" or " admin"
+
+# Forge RSA signature using SignatureForger
+forger = SignatureForger(
+    keysize=key.size_in_bits(),
+    hashAlg="SHA-256",
+    public_exponent=e,
+    ffcount=8,
+    quiet=False,
+)
+
+forged_signature = forger.forge_signature_with_garbage_end(message)
+print(f"[+] un-padded forged signature: {forged_signature} [+]")
+# Verify forged signature locally
+verified = pow(int.from_bytes(forged_signature, byteorder='big'), e, n)
+verified_bytes = verified.to_bytes((verified.bit_length() + 7) // 8, 'big')
+
+if sha256(message.encode()).digest() in verified_bytes:
+    print("[+] Signature verification successful locally! [+]")
+else:
+    print("[-] Signature verification failed locally! [-]")
+    exit(1)
+
+# Create session cookie
+data = {
+    "username": message.strip(),  # Strip newline if server expects 'admin'
+    "signature": b64encode(forged_signature).decode()
+}
+session_cookie = b64encode(json.dumps(data).encode()).decode()
+print("[+] Forged session cookie:", session_cookie, " [+]")
+
+# Make request to get flag
+url = "https://smelter.tamuctf.com/"
+cookies = {"smelter-session": session_cookie}
+
+response = requests.get(url, cookies=cookies, allow_redirects=True, timeout=5)
+pattern = r'gigem\{.*\}'
+flag = re.search(pattern, response.text)
+if flag:
+    flag = flag.group(0)
+    #flag = flag.group(1)
+print(f"[+] Flag found: {flag} [+]")
+```
+
 
 ---
 
