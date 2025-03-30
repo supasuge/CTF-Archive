@@ -43,12 +43,6 @@ def verify(message: bytes, signature: bytes) -> bool:
 
 This implementation directly performs RSA verification without rigorously validating PKCS#1 v1.5 padding. This critical oversight opens the door for Bleichenbacher's RSA signature forgery attack.
 
-### Understanding Bleichenbacher's Signature Forgery
-
-The core vulnerability arises due to RSA signature verification using an exponent of `e=3`. With such a small exponent, an attacker can exploit the weak padding validation to forge RSA signatures. Specifically, we leveraged Bleichenbacher’s RSA signature forgery method, allowing us to craft valid-looking signatures without having access to the private key.
-
----
-
 ### Solution
 
 We utilized the excellent `SignatureForger` tool, specifically designed to exploit exactly this scenario.
