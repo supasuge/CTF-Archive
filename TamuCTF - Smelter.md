@@ -29,7 +29,7 @@ For example:
 ### Vulnerable part of  code (`crypto.py`)
 
 ```python
-e = 3 # <- exponent is too small to safely facilitate RSA signature generation/verification 
+e = 3 
 
 # Signature verification code snippet:
 def verify(message: bytes, signature: bytes) -> bool:
