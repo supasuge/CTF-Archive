@@ -25,11 +25,8 @@ For example:
 {"user": "admin", "signature": "N2Z9bWHgn76tiKhU0h3iEO4DC..........................."}
 ```
 
-### Analyzing the Challenge source code 
 
-The provided web app stores session cookies containing a username and a signature, signed with RSA and verified server-side. The source code (particularly `crypto.py` and `util.py`) indicates a crucial vulnerability: RSA signatures are implemented with a dangerously small exponent (`e=3`).
-
-### Key Source Code Insight (`crypto.py`)
+### Vulnerable part of  code (`crypto.py`)
 
 ```python
 e = 3 # <- exponent is too small to safely facilitate RSA signature generation/verification 
