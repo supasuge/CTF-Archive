@@ -161,8 +161,7 @@ key = RSA.import_key(PEM)
 n, e = key.n, key.e
 print(f"[+] RSA Public key parameters: [+]")
 print(f"[+] n {n}\te = {e} [+]\n")
-# Use a message with odd hash last byte (confirmed working)
-message = "admin"  # Try "admin\n" or " admin"
+message = "admin"  
 
 # Forge RSA signature using SignatureForger
 forger = SignatureForger(
