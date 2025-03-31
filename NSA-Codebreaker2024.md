@@ -133,10 +133,6 @@ The query revealed two records that met both the geographic and temporal criteri
 
 These records were closely aligned in time and location with the USCG signal, suggesting a potential correlation.
 
-
-
-Certainly! Here's a detailed writeup in Markdown format, suitable for a post on Medium, detailing the process and logical steps taken to analyze the data provided by the US Coast Guard and the NSA database:
-
 ---
 
 # Unraveling the Mystery: Analyzing USCG Signal Data with the NSA Database
