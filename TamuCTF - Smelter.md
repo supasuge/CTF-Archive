@@ -39,7 +39,7 @@ def verify(message: bytes, signature: bytes) -> bool:
     return h == signed_h
 ```
 
-This implementation directly performs RSA verification without rigorously validating PKCS#1 v1.5 padding. This critical oversight opens the door for Bleichenbacher's RSA signature forgery attack.
+This implementation directly performs RSA verification without rigorously validating PKCS#1 v1.5 padding, and uses a public exponent of $3$ (`e = 3`). This critical oversight opens the door for Bleichenbacher's RSA signature forgery attack.
 
 ---
 
